@@ -1,0 +1,70 @@
+<html>
+    <head>
+        <title>Chat Application</title>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+                integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+                crossorigin="anonymous"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <style>
+            body{
+                margin-top:30px;
+                background-color: rgba(14, 224, 224, 0.863);
+            }
+            h3{
+                color: green;
+            }
+            .col-md-8{
+                background-color: #2C2E39;
+            }
+            label{
+                color: white;
+                font-weight: 300;
+                font-size: larger;
+            }
+        </style>
+    </head>
+    <body>
+       <div class="container">
+           <div class="row">
+                <div class="col-md-4">
+                    <div class="well">
+                        <h3>Online Users</h3>
+                        <ul class="list-group" id="users"></ul>
+                    </div>    
+                </div>
+                <div class="col-md-8">
+                     <div class="chat" id="chat"></div>  
+                     <form id="messageForm">
+                         <div class="form-group">
+                              <b><label>Enter Message</label></b>
+                              <textarea class="form-control" id="message"></textarea>
+                              </br>
+                            <input type="submit" class="btn btn-primary"value="Send Message"/>              
+                         </div>
+                     </form>
+                </div>
+           </div>
+       </div>
+
+       <script>
+        $(function(){
+            var socket=io.connect();
+            var $messageForm=$('#messageForm');
+            var $message=$('#message');
+            var $chat=$('#chat');
+
+            $messageForm.submit(function(e){
+                e.preventDefault();
+                socket.emit('send message',$message.val());
+                $message.val('');
+                console.log('submitted');
+                
+            });
+            socket.on('new message',function(data){
+                $chat.append('<div class="well">'+data.msg+'</div>');
+            });
+        })
+       </script>
+    </body>
+</html>
